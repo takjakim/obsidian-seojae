@@ -1,0 +1,545 @@
+/*
+ * 서재 · Seojae 1.1.0
+ * A quiet Obsidian theme for Korean academic writing.
+ * MIT License. Nanum Myeongjo font data and SIL OFL follow below.
+ * Sources: https://docs.obsidian.md/Reference/CSS+variables/CSS+variables
+ */
+
+/* @settings
+name: 서재 · Seojae
+id: seojae-theme-settings
+settings:
+  - id: seojae-reading-heading
+    title: 논문 읽기 환경
+    type: heading
+    level: 2
+  - id: seojae-readable-width
+    title: 본문 너비
+    description: 읽기 보기와 편집기의 최대 본문 너비입니다.
+    type: variable-number-slider
+    default: 684
+    min: 560
+    max: 900
+    step: 4
+    format: px
+  - id: seojae-density
+    title: 읽기 밀도
+    description: 표준은 테마 기본값입니다. 사용자 설정을 선택하면 아래 행간과 문단 간격이 적용됩니다.
+    type: class-select
+    allowEmpty: false
+    default: seojae-density-standard
+    options:
+      - label: 표준
+        value: seojae-density-standard
+      - label: 조밀하게
+        value: seojae-density-compact
+      - label: 여유롭게
+        value: seojae-density-relaxed
+      - label: 사용자 설정
+        value: seojae-density-custom
+  - id: seojae-custom-line-height
+    title: 사용자 설정 행간
+    description: 읽기 밀도를 사용자 설정으로 선택했을 때만 적용됩니다.
+    type: variable-number-slider
+    default: 1.9
+    min: 1.55
+    max: 2.2
+    step: 0.05
+  - id: seojae-custom-paragraph-spacing
+    title: 사용자 설정 문단 간격
+    description: 읽기 밀도를 사용자 설정으로 선택했을 때만 적용됩니다.
+    type: variable-number-slider
+    default: 0.95
+    min: 0.4
+    max: 1.6
+    step: 0.05
+    format: rem
+  - id: seojae-footnote-scale
+    title: 각주 크기
+    description: 본문 글자 크기에 대한 각주 비율입니다.
+    type: variable-number-slider
+    default: 0.86
+    min: 0.8
+    max: 1
+    step: 0.01
+    format: em
+*/
+
+body {
+  --seojae-readable-width: 684px;
+  --seojae-custom-line-height: 1.9;
+  --seojae-custom-paragraph-spacing: 0.95rem;
+  --seojae-footnote-scale: 0.86em;
+  --seojae-line-height: 1.9;
+  --seojae-paragraph-spacing: 0.95rem;
+  --font-text-theme: "Times New Roman", "Seojae Myeongjo", "Nanum Myeongjo", "나눔명조", "Noto Serif CJK KR", serif;
+  --font-text-size: 18px;
+  --line-height-normal: var(--seojae-line-height);
+  --line-height-tight: 1.5;
+  --p-spacing: var(--seojae-paragraph-spacing);
+  --heading-spacing: 2.1em;
+  --file-line-width: var(--seojae-readable-width);
+  --file-margins: 40px 44px 64px;
+
+  --h1-font: var(--font-text);
+  --h2-font: var(--font-text);
+  --h3-font: var(--font-text);
+  --h4-font: var(--font-text);
+  --h5-font: var(--font-text);
+  --h6-font: var(--font-text);
+  --h1-size: 1.65em;
+  --h2-size: 1.35em;
+  --h3-size: 1.16em;
+  --h4-size: 1.05em;
+  --h5-size: 1em;
+  --h6-size: 0.95em;
+  --h1-weight: 700;
+  --h2-weight: 700;
+  --h3-weight: 700;
+  --h4-weight: 700;
+  --h5-weight: 700;
+  --h6-weight: 700;
+  --h1-line-height: 1.55;
+  --h2-line-height: 1.6;
+  --h3-line-height: 1.65;
+  --h4-line-height: 1.7;
+  --h5-line-height: 1.7;
+  --h6-line-height: 1.7;
+  --h1-color: var(--text-normal);
+  --h2-color: var(--text-normal);
+  --h3-color: var(--text-normal);
+  --h4-color: var(--text-normal);
+  --h5-color: var(--text-normal);
+  --h6-color: var(--text-muted);
+  --bold-weight: 700;
+  --bold-color: var(--text-normal);
+  --italic-color: var(--text-normal);
+  --inline-title-font: var(--font-text);
+  --inline-title-size: 1.65em;
+  --inline-title-weight: 700;
+  --inline-title-line-height: 1.55;
+
+  --link-decoration: underline;
+  --link-decoration-hover: underline;
+  --link-external-decoration: underline;
+  --link-external-decoration-hover: underline;
+  --link-unresolved-opacity: 1;
+  --blockquote-border-thickness: 2px;
+  --blockquote-font-style: normal;
+  --blockquote-color: var(--text-normal);
+  --table-text-size: 0.94em;
+  --table-header-font: var(--font-text);
+  --table-header-weight: 700;
+  --table-header-color: var(--text-normal);
+  --table-line-height: 1.75;
+  --table-cell-vertical-alignment: top;
+  --table-border-width: 1px;
+  --table-header-border-width: 1px;
+  --table-column-max-width: 36em;
+  --code-size: 0.85em;
+  --code-radius: 4px;
+  --code-normal: var(--text-normal);
+  --list-spacing: 0.3em;
+  --footnote-size: var(--seojae-footnote-scale);
+  --callout-radius: 4px;
+  --callout-border-width: 1px;
+  --callout-border-opacity: 0.22;
+  --callout-title-weight: 600;
+  --tag-radius: 4px;
+  --tag-size: 0.82em;
+  --nav-item-size: 13px;
+  --nav-item-weight-active: 600;
+  --tab-font-size: 13px;
+  --metadata-label-font-size: 13px;
+  --metadata-input-font-size: 13px;
+  --input-radius: 5px;
+  --button-radius: 5px;
+}
+
+body.seojae-density-standard {
+  --seojae-line-height: 1.9;
+  --seojae-paragraph-spacing: 0.95rem;
+}
+
+body.seojae-density-compact {
+  --seojae-line-height: 1.75;
+  --seojae-paragraph-spacing: 0.7rem;
+}
+
+body.seojae-density-relaxed {
+  --seojae-line-height: 2.05;
+  --seojae-paragraph-spacing: 1.2rem;
+}
+
+body.seojae-density-custom {
+  --seojae-line-height: var(--seojae-custom-line-height);
+  --seojae-paragraph-spacing: var(--seojae-custom-paragraph-spacing);
+}
+
+.theme-light {
+  color-scheme: light;
+  --color-base-00: #f6f3ec;
+  --color-base-05: #f1eee6;
+  --color-base-10: #ede9e0;
+  --color-base-20: #e4e0d7;
+  --color-base-25: #d9d5cc;
+  --color-base-30: #ccc9bf;
+  --color-base-35: #b4b7aa;
+  --color-base-40: #929b8d;
+  --color-base-50: #747e71;
+  --color-base-60: #5c635a;
+  --color-base-70: #51594f;
+  --color-base-100: #343933;
+  --background-primary: #f6f3ec;
+  --background-primary-alt: #f1eee6;
+  --background-secondary: #edeae2;
+  --background-secondary-alt: #e7e4dc;
+  --background-modifier-border: #d6d7cc;
+  --background-modifier-border-hover: #b7bdb0;
+  --background-modifier-border-focus: #6b8373;
+  --background-modifier-hover: rgba(70, 98, 85, 0.07);
+  --background-modifier-active-hover: rgba(70, 98, 85, 0.12);
+  --background-modifier-form-field: #faf8f3;
+  --text-normal: #343933;
+  --text-muted: #5c635a;
+  --text-faint: #5c635a;
+  --text-on-accent: #ffffff;
+  --text-accent: #466255;
+  --text-accent-hover: #314d40;
+  --text-selection: rgba(87, 123, 103, 0.22);
+  --text-highlight-bg: rgba(191, 161, 69, 0.24);
+  --text-highlight-bg-active: rgba(191, 161, 69, 0.34);
+  --interactive-normal: #f6f3ec;
+  --interactive-hover: #e7e9df;
+  --interactive-accent: #466255;
+  --interactive-accent-hover: #385244;
+  --color-accent: #466255;
+  --color-accent-1: #3b5749;
+  --color-accent-2: #314d40;
+  --color-accent-rgb: 70, 98, 85;
+  --accent-h: 151;
+  --accent-s: 17%;
+  --accent-l: 33%;
+  --link-color: #466255;
+  --link-color-hover: #314d40;
+  --link-external-color: #466255;
+  --link-external-color-hover: #314d40;
+  --link-unresolved-color: #78613e;
+  --link-unresolved-decoration-color: #9b8666;
+  --tag-color: #466255;
+  --tag-color-hover: #314d40;
+  --tag-background: rgba(70, 98, 85, 0.08);
+  --tag-background-hover: rgba(70, 98, 85, 0.14);
+  --code-background: #edeae2;
+  --code-comment: var(--text-muted);
+  --code-function: #735b2d;
+  --code-keyword: #72546c;
+  --code-string: #4d6846;
+  --code-value: #795c38;
+  --code-operator: #77564d;
+  --code-property: #3e6870;
+  --code-tag: #7e514b;
+  --code-important: #855b38;
+  --blockquote-border-color: #8c9c89;
+  --blockquote-background-color: rgba(70, 98, 85, 0.035);
+  --table-border-color: #d0d3c6;
+  --table-header-background: #eaece2;
+  --table-header-background-hover: #e3e7da;
+  --table-row-alt-background: rgba(70, 98, 85, 0.025);
+  --table-row-background-hover: rgba(70, 98, 85, 0.055);
+  --nav-item-color: #5c635a;
+  --nav-item-color-hover: #343933;
+  --nav-item-color-active: #354f41;
+  --nav-item-background-active: #dfe5d8;
+  --nav-collapse-icon-color: #5c635a;
+  --nav-collapse-icon-color-collapsed: #5c635a;
+  --indentation-guide-color: rgba(92, 99, 90, 0.2);
+  --hr-color: #d0d3c6;
+  --icon-color: #5c635a;
+  --icon-color-hover: #343933;
+  --icon-color-active: #466255;
+  --checkbox-color: #466255;
+  --checkbox-color-hover: #314d40;
+  --checkbox-marker-color: #ffffff;
+}
+
+.theme-dark {
+  color-scheme: dark;
+  --color-base-00: #222825;
+  --color-base-05: #252c28;
+  --color-base-10: #2a322d;
+  --color-base-20: #333d35;
+  --color-base-25: #3e4a3f;
+  --color-base-30: #4d5b4d;
+  --color-base-35: #637262;
+  --color-base-40: #7b8978;
+  --color-base-50: #91a08d;
+  --color-base-60: #a5afa5;
+  --color-base-70: #b9c1b4;
+  --color-base-100: #ddded5;
+  --background-primary: #222825;
+  --background-primary-alt: #252c28;
+  --background-secondary: #1d231f;
+  --background-secondary-alt: #1a201c;
+  --background-modifier-border: #3b473d;
+  --background-modifier-border-hover: #556653;
+  --background-modifier-border-focus: #a1bea8;
+  --background-modifier-hover: rgba(161, 190, 168, 0.07);
+  --background-modifier-active-hover: rgba(161, 190, 168, 0.12);
+  --background-modifier-form-field: #29312b;
+  --text-normal: #ddded5;
+  --text-muted: #a5afa5;
+  --text-faint: #a1ada2;
+  --text-on-accent: #18211a;
+  --text-accent: #a1bea8;
+  --text-accent-hover: #c3d6c6;
+  --text-selection: rgba(158, 190, 158, 0.25);
+  --text-highlight-bg: rgba(181, 151, 64, 0.26);
+  --text-highlight-bg-active: rgba(181, 151, 64, 0.36);
+  --interactive-normal: #2a332c;
+  --interactive-hover: #343f35;
+  --interactive-accent: #a1bea8;
+  --interactive-accent-hover: #b5ccb9;
+  --color-accent: #a1bea8;
+  --color-accent-1: #b1c9b6;
+  --color-accent-2: #c3d6c6;
+  --color-accent-rgb: 161, 190, 168;
+  --accent-h: 134;
+  --accent-s: 18%;
+  --accent-l: 69%;
+  --link-color: #a1bea8;
+  --link-color-hover: #c3d6c6;
+  --link-external-color: #a1bea8;
+  --link-external-color-hover: #c3d6c6;
+  --link-unresolved-color: #ccb991;
+  --link-unresolved-decoration-color: #9f9175;
+  --tag-color: #b5cdb9;
+  --tag-color-hover: #d0e0d1;
+  --tag-background: rgba(161, 190, 168, 0.1);
+  --tag-background-hover: rgba(161, 190, 168, 0.16);
+  --code-background: #2b332c;
+  --code-comment: var(--text-muted);
+  --code-function: #d0c095;
+  --code-keyword: #c6adcb;
+  --code-string: #b4c7a2;
+  --code-value: #cdb494;
+  --code-operator: #c9ada1;
+  --code-property: #a4c4c8;
+  --code-tag: #d0a9a3;
+  --code-important: #d2b18e;
+  --blockquote-border-color: #6f8a73;
+  --blockquote-background-color: rgba(161, 190, 168, 0.035);
+  --table-border-color: #475344;
+  --table-header-background: #2e392f;
+  --table-header-background-hover: #374438;
+  --table-row-alt-background: rgba(161, 190, 168, 0.025);
+  --table-row-background-hover: rgba(161, 190, 168, 0.055);
+  --nav-item-color: #a5afa5;
+  --nav-item-color-hover: #ddded5;
+  --nav-item-color-active: #d0dfce;
+  --nav-item-background-active: #354234;
+  --nav-collapse-icon-color: #a1ada2;
+  --nav-collapse-icon-color-collapsed: #a1ada2;
+  --indentation-guide-color: rgba(165, 175, 165, 0.2);
+  --hr-color: #475344;
+  --icon-color: #a5afa5;
+  --icon-color-hover: #ddded5;
+  --icon-color-active: #b5cdb9;
+  --checkbox-color: #a1bea8;
+  --checkbox-color-hover: #c3d6c6;
+  --checkbox-marker-color: #18211a;
+}
+
+/* Native font-size settings remain authoritative. UI and code keep their fonts. */
+.markdown-rendered,
+.markdown-source-view.mod-cm6 .cm-scroller {
+  font-kerning: normal;
+}
+
+/* Reading view only: do not alter CodeMirror's measured line geometry or IME. */
+.markdown-rendered :is(p, li, blockquote, td, th) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.markdown-rendered :is(a, .internal-link) {
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+.markdown-rendered blockquote {
+  padding: 0.45em 1.1em;
+  margin-inline: 0;
+  border-radius: 0 4px 4px 0;
+}
+
+.markdown-rendered blockquote > :first-child {
+  margin-top: 0;
+}
+
+.markdown-rendered blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-rendered :is(th, td) {
+  padding: 0.55em 0.85em;
+}
+
+.markdown-rendered .el-table {
+  overflow-x: auto;
+}
+
+.markdown-rendered .footnotes {
+  margin-top: 2.5em;
+  padding-top: 0.6em;
+  border-top: 1px solid var(--hr-color);
+  color: var(--text-muted);
+  font-size: var(--seojae-footnote-scale);
+}
+
+.markdown-rendered .footnotes hr {
+  display: none;
+}
+
+.markdown-rendered .footnotes :is(p, li) {
+  line-height: 1.8;
+}
+
+/* Opt-in bibliography layout for notes with `cssclasses: seojae-references`. */
+.markdown-preview-view.seojae-references :is(.markdown-preview-sizer, .markdown-preview-section) > .el-p > p,
+.markdown-preview-view.seojae-references .csl-bib-body > .csl-entry,
+.markdown-preview-view.seojae-references :is(p, li, .csl-entry).hanging-indent,
+.markdown-preview-view.seojae-references .hanging-indent > :is(p, .csl-entry) {
+  padding-inline-start: 2em;
+  text-indent: -2em;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
+.markdown-rendered .callout-title {
+  font-family: var(--font-interface);
+  font-size: 0.88em;
+}
+
+.markdown-rendered .callout-content > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-rendered :is(a, button, input):focus-visible {
+  outline: 2px solid var(--interactive-accent);
+  outline-offset: 3px;
+}
+
+@media screen and (max-width: 600px) {
+  body {
+    --file-margins: 24px 20px 40px;
+  }
+}
+
+/* A readable draft preset; institutional submission requirements may differ. */
+@page {
+  size: A4;
+  margin: 25mm 22mm;
+}
+
+@media print {
+  body.theme-light,
+  body.theme-dark {
+    color-scheme: light;
+    --background-primary: #ffffff;
+    --background-primary-alt: #ffffff;
+    --background-secondary: #ffffff;
+    --text-normal: #000000;
+    --text-muted: #333333;
+    --text-faint: #444444;
+    --text-accent: #000000;
+    --text-accent-hover: #000000;
+    --link-color: #000000;
+    --link-external-color: #000000;
+    --link-unresolved-color: #333333;
+    --tag-color: #333333;
+    --tag-color-hover: #000000;
+    --tag-background: transparent;
+    --tag-background-hover: transparent;
+    --h6-color: #333333;
+    --bold-color: #000000;
+    --italic-color: #000000;
+    --blockquote-color: #000000;
+    --blockquote-border-color: #777777;
+    --blockquote-background-color: transparent;
+    --code-normal: #000000;
+    --code-comment: #444444;
+    --code-function: #000000;
+    --code-important: #000000;
+    --code-keyword: #000000;
+    --code-operator: #000000;
+    --code-property: #000000;
+    --code-punctuation: #333333;
+    --code-string: #333333;
+    --code-tag: #000000;
+    --code-value: #333333;
+    --code-background: #f4f4f4;
+    --table-border-color: #888888;
+    --table-header-color: #000000;
+    --table-header-background: #f0f0f0;
+    --table-row-alt-background: transparent;
+    --hr-color: #aaaaaa;
+    --font-text-size: 11pt;
+    --line-height-normal: 1.8;
+    --p-spacing: 0.95rem;
+    --file-line-width: 100%;
+    --file-margins: 0;
+  }
+
+  .markdown-rendered {
+    font-size: 11pt;
+    line-height: 1.8;
+    color: #000000;
+    background: #ffffff;
+  }
+
+  .markdown-rendered :is(h1, h2, h3, h4, h5, h6) {
+    break-after: avoid;
+  }
+
+  .markdown-rendered :is(p, li) {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .markdown-rendered :is(tr, img, svg) {
+    break-inside: avoid;
+  }
+
+  .markdown-rendered thead {
+    display: table-header-group;
+  }
+
+  .markdown-rendered table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+  }
+
+  .markdown-rendered .el-table {
+    overflow: visible;
+  }
+
+  .markdown-rendered :is(td, th, a) {
+    overflow-wrap: anywhere;
+  }
+
+  .markdown-rendered pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .markdown-rendered .callout {
+    background: transparent;
+    border-color: #999999;
+  }
+
+  .markdown-rendered .callout-title {
+    color: #333333;
+  }
+}
