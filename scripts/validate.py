@@ -4,25 +4,22 @@
 from __future__ import annotations
 
 import argparse
-import base64
-import hashlib
 import json
 import re
 import sys
 from pathlib import Path
 
+from build import render_css
+
 
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 EXPECTED_AUTHOR = "takjakim"
 EXPECTED_AUTHOR_URL = "https://github.com/takjakim"
-EXPECTED_FONT_HASHES = {
-    "400": "7ed9e8653a8ed04285d51dc343ffea6eb3d9c73afc27383ea8929ee4ffd03205",
-    "700": "bc9ed8e60d93fe6db054b8fb988481b625f2eef8cb2317ad0e9834681b8fe3f3",
-}
+# Project budget, intentionally conservative; not an official directory limit.
+MAX_CSS_BYTES = 100_000
 REQUIRED_FILES = (
     "README.md",
     "LICENSE",
-    "FONT-LICENSE.txt",
     "manifest.json",
     "versions.json",
     "theme.css",
@@ -37,14 +34,6 @@ PRIVATE_OR_SECRET_PATTERNS = {
     "private key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     "generic API secret": re.compile(r"(?i)\b(?:api[_-]?key|secret[_-]?key)\s*[:=]\s*['\"][^'\"]{12,}['\"]"),
 }
-FONT_FACE = re.compile(
-    r"@font-face\s*\{(?P<body>.*?)\}", re.DOTALL
-)
-FONT_DATA = re.compile(
-    r"font-weight:\s*(?P<weight>400|700)\s*;.*?"
-    r"url\([\"']data:font/ttf;base64,(?P<data>[A-Za-z0-9+/=]+)[\"']\)",
-    re.DOTALL,
-)
 
 
 class Validation:
@@ -102,57 +91,30 @@ class Validation:
     def validate_css(self) -> None:
         try:
             css = (self.root / "theme.css").read_text(encoding="utf-8")
-            source = (self.root / "src/theme.css").read_text(encoding="utf-8")
-            font_license = (self.root / "FONT-LICENSE.txt").read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError) as exc:
-            self.error(f"CSS/font license files could not be read: {exc}")
+            expected = render_css(self.root)
+        except (OSError, UnicodeDecodeError, ValueError) as exc:
+            self.error(f"CSS build inputs are invalid: {exc}")
             return
 
-        if "@import" in re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL).lower():
-            self.error("theme.css: runtime @import is not allowed")
-        for match in re.finditer(r"url\(\s*([\"']?)(.*?)\1\s*\)", css, re.DOTALL | re.IGNORECASE):
-            target = match.group(2).strip()
-            if not target.startswith("data:"):
-                self.error(f"theme.css: runtime URL is not bundled: {target[:100]}")
-
-        if source not in css:
-            self.error("theme.css: does not contain src/theme.css verbatim")
-        if "SIL OPEN FONT LICENSE" not in font_license or "NHN Corporation" not in font_license:
-            self.error("FONT-LICENSE.txt: expected Nanum Myeongjo OFL attribution is missing")
-        if "FONT-LICENSE.txt" not in css or "SIL OPEN FONT LICENSE" not in css:
-            self.error("theme.css: bundled font license notice is missing")
-
-        found: dict[str, str] = {}
-        for face in FONT_FACE.finditer(css):
-            data_match = FONT_DATA.search(face.group("body"))
-            if not data_match:
-                continue
-            weight = data_match.group("weight")
-            try:
-                font = base64.b64decode(data_match.group("data"), validate=True)
-            except ValueError as exc:
-                self.error(f"theme.css: invalid base64 font for weight {weight}: {exc}")
-                continue
-            found[weight] = hashlib.sha256(font).hexdigest()
-        if found != EXPECTED_FONT_HASHES:
-            self.error(f"theme.css: bundled font hashes differ from the approved originals: {found}")
+        if len(css.encode("utf-8")) > MAX_CSS_BYTES:
+            self.error(f"theme.css: exceeds the project size budget of {MAX_CSS_BYTES} bytes")
+        declarations = re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL)
+        if re.search(r"@font-face|@import|url\s*\(", declarations, re.IGNORECASE):
+            self.error("theme.css: runtime assets are not allowed; use installed fonts")
+        if css != expected:
+            self.error("theme.css: generated artifact is stale or modified; rebuild with scripts/build.py")
 
     def validate_public_text(self) -> None:
         for path in sorted(self.root.rglob("*")):
-            if not path.is_file() or ".git" in path.parts or path.suffix.lower() not in TEXT_SUFFIXES:
+            if (not path.is_file()
+                    or any(part in {".git", ".local", "__pycache__"} for part in path.parts)
+                    or path.suffix.lower() not in TEXT_SUFFIXES):
                 continue
             try:
                 text = path.read_text(encoding="utf-8")
             except UnicodeDecodeError:
                 self.error(f"{path.relative_to(self.root)}: expected UTF-8 text")
                 continue
-            if path.suffix.lower() == ".css":
-                # Scan CSS source and generated CSS while excluding only the approved binary payloads.
-                text = re.sub(
-                    r"data:font/ttf;base64,[A-Za-z0-9+/=]+",
-                    "data:font/ttf;base64,<bundled-font>",
-                    text,
-                )
             for label, pattern in PRIVATE_OR_SECRET_PATTERNS.items():
                 if pattern.search(text):
                     self.error(f"{path.relative_to(self.root)}: contains a possible {label}")

@@ -96,7 +96,7 @@ class PublishSafetyTests(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory(prefix="seojae-publish-test-")
         self.base = Path(self.temporary.name)
         self.repository = self.base / "repository"
-        shutil.copytree(ROOT, self.repository, ignore=shutil.ignore_patterns(".git", "__pycache__", "*.pyc"))
+        shutil.copytree(ROOT, self.repository, ignore=shutil.ignore_patterns(".git", ".local", "__pycache__", "*.pyc"))
         self.bin = self.base / "bin"
         self.bin.mkdir()
         self._write_executable(self.bin / "git", FAKE_GIT)

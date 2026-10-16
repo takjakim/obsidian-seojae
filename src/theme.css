@@ -1,7 +1,7 @@
 /*
- * 서재 · Seojae 1.1.0
+ * 서재 · Seojae 1.1.1
  * A quiet Obsidian theme for Korean academic writing.
- * MIT License. Nanum Myeongjo font data and SIL OFL follow below.
+ * MIT License. Uses locally installed Nanum Myeongjo and Times New Roman.
  * Sources: https://docs.obsidian.md/Reference/CSS+variables/CSS+variables
  */
 
@@ -72,7 +72,7 @@ body {
   --seojae-footnote-scale: 0.86em;
   --seojae-line-height: 1.9;
   --seojae-paragraph-spacing: 0.95rem;
-  --font-text-theme: "Times New Roman", "Seojae Myeongjo", "Nanum Myeongjo", "나눔명조", "Noto Serif CJK KR", serif;
+  --font-text-theme: "Times New Roman", "Nanum Myeongjo", "나눔명조", "Noto Serif CJK KR", serif;
   --font-text-size: 18px;
   --line-height-normal: var(--seojae-line-height);
   --line-height-tight: 1.5;
@@ -364,7 +364,6 @@ body.seojae-density-custom {
 
 .markdown-rendered :is(a, .internal-link) {
   text-underline-offset: 0.18em;
-  text-decoration-thickness: 1px;
 }
 
 .markdown-rendered blockquote {
@@ -411,6 +410,7 @@ body.seojae-density-custom {
 .markdown-preview-view.seojae-references :is(p, li, .csl-entry).hanging-indent,
 .markdown-preview-view.seojae-references .hanging-indent > :is(p, .csl-entry) {
   padding-inline-start: 2em;
+  /* CSS2 negative indentation; no hanging/each-line keywords are needed. */
   text-indent: -2em;
   word-break: normal;
   overflow-wrap: anywhere;
@@ -499,7 +499,7 @@ body.seojae-density-custom {
   }
 
   .markdown-rendered :is(h1, h2, h3, h4, h5, h6) {
-    break-after: avoid;
+    page-break-after: avoid;
   }
 
   .markdown-rendered :is(p, li) {
@@ -508,7 +508,7 @@ body.seojae-density-custom {
   }
 
   .markdown-rendered :is(tr, img, svg) {
-    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
   .markdown-rendered thead {
